@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Controle de Rotina Diária</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #b2f2ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 90%;
+            background: #d0f0c0;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px #888;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1976d2;
+            margin-bottom: 20px;
+        }
+
+        img {
+            width: 180px;
+            display: block;
+            margin: 0 auto 20px auto;
+            border-radius: 12px;
+            box-shadow: 0px 0px 10px #555;
+            transition: transform 0.3s;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+        }
+
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            border-radius: 6px;
+            padding: 8px;
+            margin: 5px 2px;
+            border: 1px solid #999;
+            width: calc(25% - 14px);
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #1976d2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #0d47a1;
+        }
+
+        .card {
+            background: #9ff597;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #1976d2;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📅 Controle de Rotina Diária</h1>
+
+        <!-- Imagem centralizada com link -->
+
+
+        <h3>Nova Tarefa</h3>
+
+        <input id="pessoa" placeholder="Nome da pessoa">
+        <input id="tarefa" placeholder="Nome da tarefa">
+        <input id="horaInicio" type="time">
+        <input id="horaFim" type="time">
+
+        <button onclick="criar()">Adicionar</button>
+
+        <h2>Rotina de Hoje</h2>
+
+        <div id="lista"></div>
+
+    </div>
+
+    <script>
+
+        let rotina = [];
+
+        // Função para criar nova tarefa
+        function criar() {
+            let pessoa = document.getElementById("pessoa").value;
+            let tarefa = document.getElementById("tarefa").value;
+            let horaInicio = document.getElementById("horaInicio").value;
+            let horaFim = document.getElementById("horaFim").value;
+
+            if (!pessoa || !tarefa || !horaInicio || !horaFim) {
+                alert("Preencha tudo");
+                return;
+            }
+
+            rotina.push({
+                pessoa,
+                tarefa,
+                horaInicio,
+                horaFim,
+                status: "pendente",
+                data: new Date().toLocaleDateString()
+            });
+
+            salvar();
+            mostrar();
+        }
+
+        // Funções para atualizar status
+        function concluir(i) {
+            rotina[i].status = "concluído";
+            salvar();
+            mostrar();
+        }
+
+        function falhou(i) {
+            rotina[i].status = "não feito";
+            salvar();
+            mostrar();
+        }
+
+        // Salvar e carregar dados no localStorage
+        function salvar() {
+            localStorage.setItem("rotina", JSON.stringify(rotina));
+        }
+
+        function carregar() {
+            let dados = localStorage.getItem("rotina");
+            if (dados) rotina = JSON.parse(dados);
+        }
+
+        // Mostrar tarefas na tela
+        function mostrar() {
+            let html = "";
+            for (let i = 0; i < rotina.length; i++) {
+                html += `
+        <div class="card">
+            <b>${rotina[i].pessoa}</b><br>
+            ${rotina[i].tarefa}<br>
+            ${rotina[i].horaInicio} até ${rotina[i].horaFim}<br>
+            Status: ${rotina[i].status}<br>
+            <button onclick="concluir(${i})">Concluído</button>
+            <button onclick="falhou(${i})">Não Feito</button>
+        </div>
+        `;
+            }
+            document.getElementById("lista").innerHTML = html;
+        }
+
+        // Carregar rotina ao iniciar
+        carregar();
+        mostrar();
+        // Funções para atualizar status e remover da lista
+function concluir(i){
+    rotina.splice(i, 1); // Remove a tarefa do array
+    salvar();
+    mostrar();
+}
+
+function falhou(i){
+    rotina.splice(i, 1); // Remove a tarefa do array
+    salvar();
+    mostrar();
+}
+
+
+    </script>
+
+</body>
+
+</html>
